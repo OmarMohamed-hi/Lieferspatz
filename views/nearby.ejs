@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lieferpatz</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+  <body>
+    <%- include("partials/header.ejs") %>
+    
+    
+
+
+    <main>
+      <section class="search-section">
+        <p>Who delivers in your neighborhood?</p>
+        <div class="delivery-options">
+          <label><input type="radio" name="delivery" checked /> Delivery</label>
+          <label><input type="radio" name="delivery" /> Pickup</label>
+        </div>
+        <div class="search-bar">
+          <input type="text" placeholder="Home, 45391 Essen" />
+          <input type="text" placeholder="Pizza, sushi..." />
+          <button type="button" class="btn btn-success">Find Food</button>
+        </div>
+      </section>
+
+      <section class="popular-nearby">
+        <h2>Popular Near You:</h2>
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+
+              <div class="col">
+                <div class="card h-100">
+                  <img src="images/DONER.jpg" class="card-img-top" alt="...">
+                  <div class="card-body">
+                    <h5 class="card-title">Urban Döner</h5>
+                    <p class="card-text">enjoy Halal Döner </p>
+                    <a href="./rest.html" class="btn btn-success">Show Menu</a>
+                  </div>
+                  <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    <div class="heart-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                    </svg></div>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="col">
+                <div class="card h-100">
+                  <img src="images/pizza.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                  <h5 class="card-title">Pizza di Milano</h5>
+                  <p class="card-text">enjoy Italian Pizzza</p>
+                  <a href="./rest.html" class="btn btn-success">Show Menu</a>
+                </div>
+    
+                  <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    <div class="heart-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                    </svg></div>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="col">
+                <div class="card h-100">
+                <img src="images/burger.jpg" alt="Burger" />
+                  <div class="card-body">
+                    <h5 class="card-title">The Burger Joint</h5>
+                    <p class="card-text">Burger Me</p>
+                    <a href="./rest.html" class="btn btn-success">Show Menu</a>
+    
+                  </div>
+    
+                  <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    <div class="heart-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                    </svg></div>
+                  </div>
+                </div>
+              </div>
+    
+              <div class="col">
+                <div class="card h-100">
+                  <img src="images/sushi.jpg" alt="Sushi" />
+                  <div class="card-body">
+                    <h5 class="card-title">Sakura Rolls</h5>
+                    <p class="card-text">Rolls</p>
+                    <a href="./rest.html" class="btn btn-success">Show Menu</a>
+    
+                  </div>
+    
+                  <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    <div class="heart-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                    </svg></div>
+                  </div>
+                </div>
+              </div>
+    
+    
+              <div class="col">
+                <div class="card h-100">
+                  <img src="images/pasta.jpg" alt="Pasta" />
+                  <div class="card-body">
+                    <h5 class="card-title">Pasta La Vista</h5>
+                    <p class="card-text">Pasta La Vasta</p>
+                    <a href="./rest.html" class="btn btn-success">Show Menu</a>
+    
+                  </div>
+    
+                  <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    <div class="heart-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                    </svg></div>
+                  </div>
+                </div>
+              </div>
+    
+    
+              <div class="col">
+                <div class="card h-100">
+                  <img src="images/chinese.jpg" alt="Chinese" />
+                  <div class="card-body">
+                    <h5 class="card-title">Dragon's Bite</h5>
+                    <p class="card-text">China is Here</p>
+                    <a href="./rest.html" class="btn btn-success">Show Menu</a>
+    
+                  </div>
+    
+                  <div class="card-footer">
+                    <small class="text-body-secondary">Last updated 3 mins ago</small>
+                    <div class="heart-icon"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bookmark-heart" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M8 4.41c1.387-1.425 4.854 1.07 0 4.277C3.146 5.48 6.613 2.986 8 4.412z"/>
+                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                    </svg></div>
+                  </div>
+                </div>
+              </div>
+    
+    
+            </div>        
+            </div>
+          </div>
+        </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+    
+    
+    <script src="script.js"></script>
+  </body>
+</html>

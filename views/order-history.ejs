@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lieferpatz</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <%- include("partials/header.ejs") %>
+
+    <div class="order-history-page">
+      <!-- Header Section -->
+      <div class="header text-center py-4">
+        <span class="header-circle">Your Order History</span>
+      </div>
+
+      <!-- Order History Cards -->
+      <div class="container mt-4">
+        <!-- Order 1 -->
+        <div
+          class="menu-item mb-3 p-3 d-flex align-items-center custom-bg text-white rounded mt-2"
+        >
+          <div class="flex-grow-1">
+            <h4>Funghi Pizza</h4>
+            <p>Restaurant: Pizza di Milano</p>
+            <p>Date of order: 02.02.2024. Completed</p>
+            <p>2 Items. Total amount: 13.00€</p>
+          </div>
+          <div class="order-right d-flex flex-column">
+            <div class="order-image">
+              <img
+                src="./AFO/pizza-funghi-1080x1080.jpg"
+                alt="Funghi Pizza"
+                class="rounded-circle"
+                width="100"
+              />
+            </div>
+
+            <div class="order-buttons text-end">
+              <button class="btn btn-success mb-2">View Shop</button>
+              <button class="btn btn-success">Order Again</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order 2 -->
+        <div
+          class="menu-item mb-3 p-3 d-flex align-items-center custom-bg text-white rounded mt-2"
+        >
+          <div class="flex-grow-1">
+            <h4>Salami Pizza</h4>
+            <p>Restaurant: Pizza di Milano</p>
+            <p>Date of order: 01.01.2024. Completed</p>
+            <p>2 Items. Total amount: 17.00€</p>
+          </div>
+          <div class="order-right d-flex flex-column">
+            <div class="order-image">
+              <img
+                src="./AFO/salami.jpg"
+                alt="Salami Pizza"
+                class="rounded-circle"
+                width="100"
+              />
+            </div>
+            <div class="order-buttons text-end">
+              <button class="btn btn-success mb-2">View Shop</button>
+              <button class="btn btn-success">Order Again</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order 3 -->
+        <div
+          class="menu-item mb-3 p-3 d-flex align-items-center custom-bg text-white rounded mt-2"
+        >
+          <div class="flex-grow-1">
+            <h4>Salami Pizza</h4>
+            <p>Restaurant: Pizza di Milano</p>
+            <p>Date of order: 12.12.2023. Completed</p>
+            <p>2 Items. Total amount: 17.00€</p>
+          </div>
+          <div class="order-right d-flex flex-column">
+            <div class="order-image">
+              <img
+                src="./AFO/salami.jpg"
+                alt="Salami Pizza"
+                class="rounded-circle"
+                width="100"
+              />
+            </div>
+            <div class="order-buttons text-end">
+              <button class="btn btn-success mb-2">View Shop</button>
+              <button class="btn btn-success">Order Again</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include("partials/footer.ejs") %>
+    
+    <script src="script.js"></script>
+  </body>
+</html>

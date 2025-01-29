@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lieferpatz</title>
+    <link rel="stylesheet" href="styles/styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg sticky-top">
+        <div
+          class="container d-flex justify-content-between align-items-center"
+        >
+          <!-- Left: Brand -->
+          <a class="navbar-brand" href="/"><b>LIEFERSPATZ</b></a>
+
+          <div class="collapse navbar-collapse justify-content-end" id="main">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link p-2 p-lg-3" href="/contactus">Contact Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link p-2 p-lg-3" href="/signout">Signout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+    
+
+    <main class="container mt-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="banner position-relative">
+            <img
+              src="images/pizzaco.jpeg"
+              alt="Pizza Banner"
+              class="img-fluid w-100"
+            />
+            <!-- <div class="overlay text-center">
+              <h1 class="display-4">Pizza di Milano</h1>
+              <p>Pizza made with ❤️</p>
+            </div> -->
+
+            <div class="menu-circle">
+              <span>Menu</span>
+            </div>
+
+            <div class="restaurant-circle">
+              <span>Pizza di Milano</span>
+            </div>
+          </div>
+
+          <div class="rating-box position-absolute">
+            <d class="row text-center">
+              <div class="col">
+                <span class="rating-value">274 ratings</span>
+              </div>
+              <div class="col">
+                <span class="rating-value">90% Food was good</span>
+              </div>
+              <div class="col">
+                <span class="rating-value">87% Delivery was on time</span>
+              </div>
+              <div class="col">
+                <span class="rating-value">93% Order was correct</span>
+              </div>
+            
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-lg-8">
+          <div
+            class="menu-item mb-3 p-3 d-flex align-items-center custom-bg text-white rounded mt-5"
+>
+            <div class="flex-grow-1">
+              <h4>Funghi Pizza</h4>
+              <p class="mb-1">
+                Assorted mushrooms with sage and brown butter make this warm and
+                delicious Funghi pizza.
+              </p>
+              <span class="price">6.50€</span>
+              <div class="order-buttons text-end">
+                <button class="btn btn-success">Add to cart</button>
+              </div>
+            </div>
+            <img
+              src="images/pizza-funghi-1080x1080.jpg"
+              alt="Funghi Pizza"
+              class="rounded-circle"
+              width="100"
+            />
+          </div>
+
+          <div
+            class="menu-item mb-3 p-3 d-flex align-items-center custom-bg text-white rounded"
+          >
+            <div class="flex-grow-1">
+              <h4>Salami Pizza</h4>
+              <p class="mb-1">
+                This Salami Pizza is loaded with lots of cheese, banana peppers,
+                onions, garlic, and fresh basil.
+              </p>
+              <span class="price">8.50€</span>
+              <div class="order-buttons text-end">
+                <button class="btn btn-success">Add to cart</button>
+              </div>
+            </div>
+            <img
+              src="images/salami.jpg"
+              alt="Salami Pizza"
+              class="rounded-circle"
+              width="100"
+            />
+          </div>
+
+          <div
+            class="menu-item mb-3 p-3 d-flex align-items-center custom-bg text-white rounded"
+          >
+            <div class="flex-grow-1">
+              <h4>Pizza Quattro Formaggi</h4>
+              <p class="mb-1">
+                Made with 4 cheeses for a perfectly balanced, cheese lover's
+                dream.
+              </p>
+              <span class="price">7.50€</span>
+              <div class="order-buttons text-end">
+                <button class="btn btn-success">Add to cart</button>
+              </div>
+            </div>
+            <img
+              src="images/cheese.jpg"
+              alt="Quattro Formaggi Pizza"
+              class="rounded-circle"
+              width="100"
+            />
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="order-summary p-3 bg-light rounded mt-5">
+            <h4>My Order</h4>
+            <p class="mb-1">Delivery to Ahmed:</p>
+            <p class="text-secondary">Duisburger str. 16, 45462 Duisburg</p>
+
+            <hr />
+
+            <div class="menu-item-container">
+              <div class="d-flex justify-content-between">
+                <span>Pizza Funghi</span>
+                <span>6.50€</span>
+                
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>Subtotal</span>
+                <span>13.00€</span>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span>Delivery Fees</span>
+                <span>0.00€</span>
+              </div>
+
+              <hr />
+
+              <div class="d-flex justify-content-between fw-bold">
+                <span>Total</span>
+                <span>13.00€</span>
+              </div>
+            </div>
+            <a
+            href="/checkout"
+            class="btn btn-success w-100 mt-3"
+            >Checkout</a
+          >
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+    
+    <script src="script.js"></script>
+
+  </body>
+</html>
