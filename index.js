@@ -456,6 +456,136 @@ app.post("/edit-item", isAuthenticated, upload.single("EditItemImage"), (req, re
 });
 
 
+//Orders Confirmation
+
+app.post("/confirmOrder", isAuthenticated, (req, res) => {
+  const { orderId } = req.body;
+
+  db.get("SELECT * FROM Orders WHERE Order_ID = ?", [orderId], (err, order) => {
+    if (err || !order) {
+      console.error("Error fetching order:", err);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while fetching the order.",
+      });
+    }
+
+    const restaurantShare = parseFloat((order.Total_Price * 0.85).toFixed(2));
+
+    db.serialize(() => {
+      // Deduct 85% from platformEarnings
+      db.run(
+        "UPDATE platformEarnings SET Balance = ROUND(Balance - ?, 2) WHERE id = 1",
+        [restaurantShare],
+        (err) => {
+          if (err) {
+            console.error("Error updating platformEarnings balance:", err);
+            return res.status(500).json({
+              success: false,
+              message: "An error occurred while updating platformEarnings balance.",
+            });
+          }
+        }
+      );
+
+      // Add 85% to restaurant's balance
+      db.run(
+        "UPDATE Restaurant SET Balance = ROUND(Balance + ?, 2) WHERE Restaurant_ID = ?",
+        [restaurantShare, order.Restaurant_ID],
+        (err) => {
+          if (err) {
+            console.error("Error updating restaurant balance:", err);
+            return res.status(500).json({
+              success: false,
+              message: "An error occurred while updating restaurant balance.",
+            });
+          }
+
+          // Update order status
+          db.run(
+            "UPDATE Orders SET Status = ? WHERE Order_ID = ?",
+            ["Confirmed", orderId],
+            (err) => {
+              if (err) {
+                console.error("Error updating order status:", err);
+                return res.status(500).json({
+                  success: false,
+                  message: "An error occurred while updating the order status.",
+                });
+              }
+
+              res.json({
+                success: true,
+                message: "Order confirmed successfully!",
+              });
+            }
+          );
+        }
+      );
+    });
+  });
+});
+
+//Orders Refuse
+
+app.post("/refuseOrder", isAuthenticated, (req, res) => {
+  const { orderId } = req.body;
+
+  db.get("SELECT * FROM Orders WHERE Order_ID = ?", [orderId], (err, order) => {
+    if (err || !order) {
+      console.error("Error fetching order:", err);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while fetching the order.",
+      });
+    }
+
+    db.serialize(() => {
+      // Refund the total price to the user
+      db.run(
+        "UPDATE User SET User_Balance = User_Balance + ? WHERE User_ID = ?",
+        [order.Total_Price.toFixed(2), order.User_ID],
+        (err) => {
+          if (err) {
+            console.error("Error updating user balance:", err);
+            return res.status(500).json({
+              success: false,
+              message: "An error occurred while refunding the user.",
+            });
+          }
+
+          // Update order status
+          db.run(
+            "UPDATE Orders SET Status = ? WHERE Order_ID = ?",
+            ["Refused", orderId],
+            (err) => {
+              if (err) {
+                console.error("Error updating order status:", err);
+                return res.status(500).json({
+                  success: false,
+                  message: "An error occurred while updating the order status.",
+                });
+              }
+
+              res.json({
+                success: true,
+                message: "Order refused and refunded successfully!",
+              });
+            }
+          );
+        }
+      );
+    });
+  });
+});
+
+
+
+
+
+
+
+
 
   // PLZ adding to deliver
 

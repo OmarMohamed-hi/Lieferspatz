@@ -368,7 +368,7 @@
               <p>Total Income: <%= order.Total_Price %> Euros</p>
               </div>
               <div class="order-actions">
-              <button class="accept" onclick="OrderAction('<%= order.Order_ID %> ', 'Confirm')">Accept</button>
+              <button class="accept" onclick="OrderAction('<%= order.Order_ID %> ', 'accept')">Accept</button>
               <button class="decline" onclick="OrderAction('<%= order.Order_ID %>', 'Refuse')">Decline</button>
               </div>
             </div>
@@ -517,6 +517,60 @@
         });
         });
       }
+
+
+
+      function OrderAction(orderId, action) {
+        let newStatus = '';
+        let fetchUrl = '';
+
+        if (action === 'accept') {
+          newStatus = 'Confirmed';
+          fetchUrl = '/confirmOrder';
+        } else if (action === 'Refuse') {
+          newStatus = 'Refused';
+          fetchUrl = '/refuseOrder';
+        }
+
+        updateOrderStatus(orderId, newStatus);
+
+        fetch(fetchUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId })
+        })
+          .then(response => response.json())
+          .then(data => alert(data.message))
+          .then(() => location.reload())
+          .catch(err => console.error(`Error ${action === 'accept' ? 'confirming' : 'refusing'} order:`, err));
+      }
+
+      function updateOrderStatus(orderId, newStatus) {
+        fetch(`/update-order-status/${orderId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ newStatus }),
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Order status updated successfully:', data);
+            location.reload();
+          })
+          .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+          });
+      }
+
+
+
+
 
       document.getElementById('addPlzForm').addEventListener('submit', function(event) {
           event.preventDefault();
