@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <style>
+        header {
+            background-color: #1a8754;
+            color: white;
+        }
+
+        main {
+            background-color: #8dad89;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar navbar-expand-lg sticky-top">
+          <div
+            class="container d-flex justify-content-between align-items-center"
+          >
+            <!-- Left: Brand -->
+            <a class="navbar-brand" style="color: white;" href="/clientDashboard"><b>LIEFERSPATZ</b> </a>
+  
+            <div class="collapse navbar-collapse justify-content-end" id="main">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link p-2 p-lg-3" style="color: white;" href="/signout">Signout</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </header>
+    <main class="px-lg-4 px-xl-5 col-lg-12 d-flex align-items-center justify-content-center"
+        style="min-height: 100vh;padding-top: 5rem; padding-bottom: 5rem ;">
+        <div class="container">
+            <div class="row">
+                <% orders.forEach(order=> { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-header">Order ID: <%= order.Order_ID %>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">Details: <%= order.Items %>
+                                </h5>
+                                <p class="card-text">Total Price: <%= order.Total_Price %> €
+                                </p>
+                                <p class="card-text">Status: <%= order.Status %>
+                                </p>
+                                <p class="card-text">Time of Order :
+                                    <%= order.Order_Date %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById("currentYear").innerHTML = new Date().getFullYear();
+
+
+        function calculateDeliveryTime(order) {
+            const preparationTime = 20;
+            const totalPreparationTime = order.length * preparationTime;
+            const estimatedDeliveryTime = new Date(Date.now() + totalPreparationTime * 60000);
+
+            return estimatedDeliveryTime.toDateString() + ' ' + estimatedDeliveryTime.toLocaleTimeString();
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

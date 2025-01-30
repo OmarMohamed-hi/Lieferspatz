@@ -184,8 +184,8 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-        // window.location.href = '/orderConfirmation';
-        window.location.reload();
+          window.location.href = '/clientDashboard';
+        // window.location.reload();
           } else {
         alert('There was an error processing your order. Please try again.');
           }

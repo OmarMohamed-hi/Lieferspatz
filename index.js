@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limit file size to 5MB
+  limits: { fileSize: 20 * 1024 * 1024 }, // Limit file size to 5MB
 });
 
 // Session middleware setup
@@ -245,6 +245,29 @@ app.get("/clientDashboard", isAuthenticated, (req, res) => {
   });
 });
 
+app.get("/myOrders", isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+
+  // Get user's orders
+  db.all(
+    `SELECT * FROM Orders 
+     WHERE User_ID = ? 
+     ORDER BY Order_Date DESC`,
+    [req.session.userId],
+    (err, orders) => {
+      if (err) {
+        console.error("Error fetching orders:", err);
+        return res.status(500).send("Database error");
+      }
+
+      res.render("myOrders.ejs", {
+        orders: orders || [],
+      });
+    }
+  );
+});
+
+
 // Client orders 
 app.post("/addOrder", isAuthenticated, (req, res) => {
   const { restaurandId, cart, total, Notice } = req.body;
@@ -427,16 +450,28 @@ app.get("/get-item/:id", isAuthenticated, (req, res) => {
 });
 
 app.post("/edit-item", isAuthenticated, upload.single("EditItemImage"), (req, res) => {
-  const { itemId, itemName, itemPrice, description } = req.body;
-  const image = req.file ? req.file.filename : null;
 
-  if (!itemName || !itemPrice || !description ) {
-    return res.status(400).send("All fields are required.");
-  }
 
-  if (!itemId) {
-    return res.status(400).send("Error from the server, Item Id is missed.");
-  }
+    const { itemId, itemName, itemPrice, description } = req.body;
+
+    if (!itemName || !itemPrice || !description) {
+      return res.status(400).send("All fields are required.");
+    }
+  
+    if (!itemId) {
+      return res.status(400).send("Error from the server, Item Id is missed.");
+    }
+  
+    // First, fetch the current details of the item to preserve existing data like the image
+    db.get("SELECT Image FROM Menu_Item WHERE Menu_Item_ID = ?", [itemId], (err, row) => {
+      if (err) {
+        console.error("Error fetching current item details:", err.message);
+        return res.status(500).send("Failed to retrieve current item data.");
+      }
+  
+      // Determine the image to use
+    const image = req.file ? req.file.filename : (row ? row.Image : null);
+    
 
 
   const query = `
@@ -453,6 +488,7 @@ app.post("/edit-item", isAuthenticated, upload.single("EditItemImage"), (req, re
     console.log("Menu item updated with ID:", itemId);
     res.redirect("/restaurantDashboard"); // Redirect to the restaurant dashboard or another page
   });
+});
 });
 
 
@@ -617,7 +653,6 @@ app.post("/add-plz", isAuthenticated, (req, res) => {
 app.post("/signUpUser", async (req, res) => {
   console.log(req.body); // Debugging
   const { Name, Address, PLZ, Email, Phone_Number, password } = req.body;
-
   if (!Name || !Email || !Phone_Number || !Address || !password || !PLZ) {
     return res.status(400).send("All fields are required.");
   }
@@ -640,8 +675,9 @@ app.post("/signUpUser", async (req, res) => {
           return res.status(500).send("Error saving user.");
         }
 
+        req.session.userId = this.lastID; // Store the new user id in session
         console.log("User registered with ID:", this.lastID);
-        res.render("user-dashboard.ejs"); // Redirect to home or another page
+        res.redirect("/clientDashboard"); // Redirect to home or another page
       }
     );
   } catch (err) {
@@ -652,7 +688,7 @@ app.post("/signUpUser", async (req, res) => {
 
 app.post("/signUpRestaurant",upload.single("RestaurantImage"), async (req, res) => {
   console.log(req.body); // Debugging
-
+   // Store the new user id in session
   const {
     restaurantName,
     phoneNumber,
@@ -707,7 +743,7 @@ app.post("/signUpRestaurant",upload.single("RestaurantImage"), async (req, res) 
           console.error("Error inserting user:", err.message);
           return res.status(500).send("Error saving user.");
         }
-
+        req.session.userId = this.lastID;
         console.log("Restaurant registered with ID:", this.lastID);
         res.redirect("/restaurantDashboard"); // Redirect to home or another page
       }
