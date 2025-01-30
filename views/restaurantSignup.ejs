@@ -26,7 +26,7 @@
 
 <main>
       
-    <form action="/saveRestaurant" method="POST" class="mainn g-3 vertical-stack d-flex flex-column">
+    <form action="/signUpRestaurant" method="POST" class="mainn g-3 vertical-stack d-flex flex-column">
         <h1>Restaurant Details</h1>
         <div class="firstn mb-3 ">
           <label for="inputResname" class="form-label">Restaurant Name </label>
@@ -34,7 +34,7 @@
         </div>
         <div class="phoneno mb-3">
           <label for="inputPhoneno" class="form-label">Phone Number</label>
-          <input type="number" class="form-control" id="inputlastn4" placeholder="+49123456789" name="phoneNumber">
+          <input type="number" class="form-control" id="inputlastn4" placeholder="+49123456789" name="phoneNumber" required>
         </div>
         <div class="emaill mb-3 ">
           <label for="inputEmail4" class="form-label">Email</label>
@@ -51,6 +51,15 @@
         <div class="zipcode mb-3">
           <label for="inputZip" class="form-label">PLZ</label>
           <input type="text" class="form-control" id="inputZip" name="plz"  min="0" minlength="5" maxlength="5" required>
+        </div>
+        <div class="mb-3">
+          <label for="Description" class="form-label">Restaurant Description</label>
+          <textarea class="form-control" id="Description" rows="3" name="Description" required></textarea>
+        </div>
+        
+        <div class="mb-3">
+          <label for="RestaurantImage" class="form-label">Restaurant Image</label>
+          <input type="file" class="form-control" id="RestaurantImage" name="RestaurantImage"  accept="image/*">
         </div>
         <div class="row mb-3">
           <div class="col">

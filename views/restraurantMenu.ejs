@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lieferpatz</title>
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container d-flex justify-content-between align-items-center">
+          <a class="navbar-brand" href="/"><b>LIEFERSPATZ</b></a>
+          <div class="collapse navbar-collapse justify-content-end" id="main">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link p-2 p-lg-3 text-white">Balance : <%= user.User_Balance %> Euro</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link p-2 p-lg-3" href="/contactus">Contact Us</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link p-2 p-lg-3" href="/signout">Signout</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container mt-4">
+      <div class="row">
+        <div class="col-12">
+          <div class="banner position-relative">
+            <% if (restaurant.RestaurantImage) { %>
+            <img src="/uploads/<%= restaurant.RestaurantImage %>" alt="Pizza Banner" class="img-fluid" style="height: 400px;" />
+            <% } else { %>
+            <img src="/uploads/defaultRestaurant.webp" alt="Default Banner" class="img-fluid" style="height: 400px;" />
+            <% } %>
+
+            <div class="menu-circle">
+              <span>Menu</span>
+            </div>
+
+            <div class="restaurant-circle">
+              <span><%= restaurant.Name %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col-lg-8">
+          <% menuItems.forEach(function(item, index) { %>
+          <div class="menu-item mb-3 p-3 d-flex align-items-center custom-bg text-white rounded mt-5">
+            <div class="flex-grow-1 p-3">
+              <h4><%= item.Name %></h4>
+              <p class="mb-1"><%= item.Description %></p>
+              
+              <div class="order-buttons text-end">
+                <span class="price fs-4 text-black float-start mt-3"><%= item.Price %> €</span>
+                <button class="btn btn-success" onclick="addToCart('<%= item.Name %>', '<%= item.Price %>');">Add to cart</button>
+                <button class="btn btn-danger ms-2" onclick="removeFromCart('<%= item.Name %>', '<%= item.Price %>');">Remove</button>
+              </div>
+            </div>
+            <img src="../uploads/<%= item.Image %>" alt="<%= item.Name %>" class="rounded-circle ms-4" width="100" />
+          </div>
+          <% }); %>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="order-summary p-3 bg-light rounded mt-5">
+            <h4>My Order</h4>
+            <p class="mb-1">Delivery to <%= user.Name %>:</p>
+            <p class="text-secondary"><%= user.Address %></p>
+
+            <hr />
+
+            <div class="menu-item-container"></div>
+
+            <hr />
+
+            <div class="d-flex justify-content-between fw-bold">
+              <span>Total</span>
+              <span id="totalPrice">0 €</span>
+            </div>
+
+            <label for="Notice">Notice</label>
+            <textarea class="form-control mt-2" id="Notice" rows="2"></textarea>
+            <div id="warning-message" class="text-center"></div> 
+                <button id="checkoutBtn" class="btn btn-success w-100 mt-3" disabled>
+                  Checkout
+                </button>
+              
+            
+            
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+    <script>
+      const cart = {};
+      const balanceElement = document.querySelector('.nav-link.text-white');
+      const userBalance = parseFloat(balanceElement.textContent.split(': ')[1].replace(' Euro', ''));
+
+      function addToCart(name, price) {
+        if (!cart[name]) {
+          cart[name] = { count: 0, price: price };
+        }
+        cart[name].count++;
+        updateCart();
+      }
+
+      function removeFromCart(name, price) {
+        if (cart[name] && cart[name].count > 0) {
+          cart[name].count--;
+          if (cart[name].count === 0) {
+        delete cart[name];
+          }
+          updateCart();
+        }
+      }
+
+      function updateCart() {
+        const menuContainer = document.querySelector('.menu-item-container');
+        menuContainer.innerHTML = '';
+        let total = 0;
+        for (let name in cart) {
+          const item = cart[name];
+          total += item.count * item.price;
+          const itemElement = document.createElement('div');
+          itemElement.classList.add('d-flex', 'justify-content-between');
+          itemElement.innerHTML = `<span>${name} x ${item.count}</span><span>${(item.count * item.price).toFixed(2)}€</span>`;
+          menuContainer.appendChild(itemElement);
+        }
+        document.getElementById('totalPrice').textContent = `${total.toFixed(2)} €`;
+        checkBalance(total);
+      }
+
+      function checkBalance(total) {
+        let warningMessage = document.getElementById('warning-message');
+        let checkoutBtn = document.getElementById('checkoutBtn');   
+        if (total === 0.00) {
+          warningMessage.innerHTML = ' <span style="color:red;">Please add items to cart</span>';
+          checkoutBtn.disabled = true;       
+          return;
+        } 
+        if (total > userBalance) {
+          warningMessage.innerHTML = ' <span style="color:red;">Not enough Balance</span>';
+          checkoutBtn.disabled = true;
+          
+        } else {
+          balanceElement.textContent = `Balance : ${userBalance} Euro`;
+          warningMessage.innerHTML = '';
+          checkoutBtn.disabled = false;         
+        }
+      }
+
+      document.getElementById('checkoutBtn').addEventListener('click', function(event) {
+        event.preventDefault();
+        if (Object.keys(cart).length === 0) {
+          return;
+        }
+        reqData = {
+          cart: JSON.stringify(cart),
+          restaurandId: "<%= restaurant.Restaurant_ID %>",
+          total: parseFloat(document.getElementById('totalPrice').textContent.split(' ')[0]),
+          Notice: document.getElementById('Notice').value
+        }
+        fetch('/addOrder', {
+          method: 'POST',
+          headers: {
+        'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(reqData)
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+        // window.location.href = '/orderConfirmation';
+        window.location.reload();
+          } else {
+        alert('There was an error processing your order. Please try again.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>

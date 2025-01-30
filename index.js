@@ -35,7 +35,7 @@ const isAuthenticated = (req, res, next) => {
   if (req.session.userId) {
     next();
   } else {
-    res.render("login.ejs");
+    res.redirect("/login");
   }
 };
 
@@ -66,7 +66,9 @@ db.run(
     PLZ INTEGER NOT NULL,
     Closing_Hours TEXT NOT NULL,
     Balance REAL DEFAULT 0,
-    PLZtoDeliver TEXT 
+    PLZtoDeliver TEXT,
+    RestaurantImage TEXT,
+    Description TEXT NOT NULL DEFAULT 'No Description Provided'
 )`,
   (err) => {
     if (err) {
@@ -117,35 +119,15 @@ db.run(
 );
 
 db.run(
-  `CREATE TABLE IF NOT EXISTS Order_History (
-    Order_History_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    User_ID INTEGER NOT NULL,
-    Order_ID INTEGER NOT NULL,
-    Restaurant_ID INTEGER NOT NULL,
-    Order_Date TEXT NOT NULL,
-    Total_Amount REAL NOT NULL,
-    Order_Status TEXT NOT NULL,
-    FOREIGN KEY (User_ID) REFERENCES User(User_ID),
-    FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID),
-    FOREIGN KEY (Restaurant_ID) REFERENCES Restaurant(Restaurant_ID)
-    )`,
-  (err) => {
-    if (err) {
-      console.error("Error creating table:", err);
-    } else {
-      console.log("Order_History table is ready.");
-    }
-  }
-);
-
-db.run(
   `CREATE TABLE IF NOT EXISTS Orders (
         Order_ID INTEGER PRIMARY KEY AUTOINCREMENT,
         User_ID INTEGER NOT NULL,
         Restaurant_ID INTEGER NOT NULL,
         Order_Date TEXT NOT NULL,
-        Delivery_Status TEXT NOT NULL,
-        Total_Amount REAL NOT NULL,
+        Items TEXT NOT NULL,
+        Status TEXT DEFAULT 'In Progress',
+        Notice TEXT,
+        Total_Price REAL NOT NULL,
         FOREIGN KEY (User_ID) REFERENCES User(User_ID),
         FOREIGN KEY (Restaurant_ID) REFERENCES Restaurant(Restaurant_ID)
     )`,
@@ -159,38 +141,15 @@ db.run(
 );
 
 db.run(
-  `CREATE TABLE IF NOT EXISTS Order_Item (
-      Order_Item_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-      Order_ID INTEGER NOT NULL,
-      Menu_Item_ID INTEGER NOT NULL,
-      Quantity INTEGER NOT NULL,
-      Price REAL NOT NULL,
-      FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID),
-      FOREIGN KEY (Menu_Item_ID) REFERENCES Menu_Item(Menu_Item_ID)
-      )`,
-  (err) => {
-    if (err) {
-      console.error("Error creating table:", err);
-    } else {
-      console.log("Order_Item table is ready.");
-    }
-  }
-);
-
-db.run(
-  `CREATE TABLE IF NOT EXISTS Payment (
-    Payment_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    Order_ID INTEGER NOT NULL,
-    Payment_Method TEXT NOT NULL,
-    Payment_Status TEXT NOT NULL,
-    Payment_Date TEXT NOT NULL,
-    FOREIGN KEY (Order_ID) REFERENCES Orders(Order_ID)
+  `CREATE TABLE IF NOT EXISTS platformEarnings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Balance REAL NOT NULL
     )`,
   (err) => {
     if (err) {
       console.error("Error creating table:", err);
     } else {
-      console.log("Payment table is ready.");
+      console.log("platformEarnings table is ready.");
     }
   }
 );
@@ -203,10 +162,6 @@ app.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
-// app.get("/nearby", (req, res) => {
-//   res.render("nearby.ejs");
-// });
-
 app.get("/contactus", (req, res) => {
   res.render("contactus.ejs");
 });
@@ -215,17 +170,133 @@ app.get("/signup", (req, res) => {
   res.render("signup.ejs");
 });
 
-app.get("/menu", (req, res) => {
-  res.render("rest.ejs");
+
+app.get("/restaurant/:id", isAuthenticated, (req, res) => {
+  const restaurantId = req.params.id;
+  const userId = req.session.userId;
+
+  const restaurantQuery = `SELECT * FROM Restaurant WHERE Restaurant_ID = ?`;
+  const userQuery = `SELECT * FROM User WHERE User_ID = ?`;
+  const menuQuery = `SELECT * FROM Menu_Item WHERE Restaurant_ID = ?`;
+
+  db.get(restaurantQuery, [restaurantId], (err, restaurant) => {
+    if (err) {
+      console.error("Error fetching restaurant:", err.message);
+      return res.status(500).send("Error fetching restaurant.");
+    }
+
+    if (!restaurant) {
+      return res.status(404).send("Restaurant not found.");
+    }
+
+    db.get(userQuery, [userId], (err, user) => {
+      if (err) {
+        console.error("Error fetching user data:", err.message);
+        return res.status(500).send("Error fetching user data.");
+      }
+
+      if (!user) {
+        return res.status(404).send("user not found.");
+      }
+
+      const userBalance = user.User_Balance;
+
+      db.all(menuQuery, [restaurantId], (err, menuItems) => {
+        if (err) {
+          console.error("Error fetching menu items:", err.message);
+          return res.status(500).send("Error fetching menu items.");
+        }
+
+        res.render("restraurantMenu.ejs", { user, restaurant, menuItems });
+      });
+    });
+  });
 });
 
-app.get("/checkout", (req, res) => {
-  res.render("checkout.ejs");
+app.get("/clientDashboard", isAuthenticated, (req, res) => {
+  const userId = req.session.userId;
+
+  // Fetch user details to get the PLZ
+  const userQuery = `SELECT * FROM User WHERE User_ID = ?`;
+  db.get(userQuery, [userId], (err, user) => {
+    if (err) {
+      console.error("Error fetching user data:", err.message);
+      return res.status(500).send("Error fetching user data.");
+    }
+
+    const userPLZ = user.PLZ;
+    const userBalance = user.User_Balance;
+    const currentTime = new Date().toTimeString().split(" ")[0]; // Get current time in HH:MM:SS format
+
+    // Fetch restaurants that are open now and deliver to the user's PLZ
+    const restaurantQuery = `
+      SELECT * FROM Restaurant
+      WHERE Opening_Hours <= ? AND Closing_Hours >= ?
+      AND PLZtoDeliver LIKE ?
+    `; 
+
+    db.all(restaurantQuery, [currentTime, currentTime, `%${userPLZ}%`], (err, restaurants) => {
+      if (err) {
+        console.error("Error fetching restaurants:", err.message);
+        return res.status(500).send("Error fetching restaurants.");
+      }
+      res.render("clientDashboard.ejs", { restaurants, userBalance });
+    });
+  });
 });
 
-app.get("/clientDashboard", (req, res) => {
-  res.render("clientDashboard.ejs");
+// Client orders 
+app.post("/addOrder", isAuthenticated, (req, res) => {
+  const { restaurandId, cart, total, Notice } = req.body;
+  const userId = req.session.userId;
+  const orderDate = new Date().toLocaleString("de-DE", { timeZone: "Europe/Berlin" }).replace(",", "");
+
+  if (!restaurandId || !cart || !total) {
+    return res.status(400).send("All fields are required.");
+  }
+
+  const insertOrderQuery = `
+    INSERT INTO Orders (User_ID, Restaurant_ID, Order_Date, Items, Total_Price, Notice)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `;
+
+  const updateUserBalanceQuery = `
+    UPDATE User
+    SET User_Balance = User_Balance - ?
+    WHERE User_ID = ?
+  `;
+
+  const updatePlatformEarningsQuery = `
+    INSERT INTO platformEarnings (id, Balance)
+    VALUES (1, ?)
+    ON CONFLICT(id) DO UPDATE SET Balance = Balance + excluded.Balance
+  `;
+
+  db.run(insertOrderQuery, [userId, restaurandId, orderDate, cart, total, Notice], function (err) {
+    if (err) {
+      console.error("Error inserting order:", err.message);
+      return res.status(500).send("Error saving order.");
+    }
+
+    db.run(updateUserBalanceQuery, [total, userId], function (err) {
+      if (err) {
+        console.error("Error updating user balance:", err.message);
+        return res.status(500).send("Error updating user balance.");
+      }
+
+      db.run(updatePlatformEarningsQuery, [total], function (err) {
+        if (err) {
+          console.error("Error updating platform earnings:", err.message);
+          return res.status(500).send("Error updating platform earnings.");
+        }
+
+        console.log("Order added with ID:", this.lastID);
+        res.json({ success: true }); // Send a JSON response indicating success
+      });
+    });
+  });
 });
+
 
 
 app.get("/restaurantDashboard", isAuthenticated, (req, res) => {
@@ -317,10 +388,7 @@ app.delete("/delete-item/:id", isAuthenticated, (req, res) => {
   });
 });
 
-
-
-
-app.post("/add-item", upload.single("AddNewItemImage"), async (req, res) => {
+app.post("/add-item", isAuthenticated, upload.single("AddNewItemImage"), async (req, res) => {
   const { itemName, itemPrice, description } = req.body;
   const image = req.file ? req.file.filename : 'defaultItem.webp';
   const restaurantId = req.session.userId; 
@@ -344,7 +412,7 @@ app.post("/add-item", upload.single("AddNewItemImage"), async (req, res) => {
   });
 });
 
-app.get("/get-item/:id", (req, res) => {
+app.get("/get-item/:id", isAuthenticated, (req, res) => {
   const itemId = req.params.id;
   const query = `SELECT * FROM Menu_Item WHERE Menu_Item_ID = ?`;
 
@@ -358,7 +426,7 @@ app.get("/get-item/:id", (req, res) => {
   });
 });
 
-app.post("/edit-item", upload.single("EditItemImage"), (req, res) => {
+app.post("/edit-item", isAuthenticated, upload.single("EditItemImage"), (req, res) => {
   const { itemId, itemName, itemPrice, description } = req.body;
   const image = req.file ? req.file.filename : null;
 
@@ -387,12 +455,9 @@ app.post("/edit-item", upload.single("EditItemImage"), (req, res) => {
   });
 });
 
-// orders paths
 
-//
-//
-//
-// PLZ adding to deliver
+
+  // PLZ adding to deliver
 
 app.post("/add-plz", isAuthenticated, (req, res) => {
   const { plz } = req.body;
@@ -419,14 +484,7 @@ app.post("/add-plz", isAuthenticated, (req, res) => {
   });
 });
 
-
-
-
-
-
-
-
-app.post("/save", async (req, res) => {
+app.post("/signUpUser", async (req, res) => {
   console.log(req.body); // Debugging
   const { Name, Address, PLZ, Email, Phone_Number, password } = req.body;
 
@@ -462,7 +520,7 @@ app.post("/save", async (req, res) => {
   }
 });
 
-app.post("/saveRestaurant", async (req, res) => {
+app.post("/signUpRestaurant",upload.single("RestaurantImage"), async (req, res) => {
   console.log(req.body); // Debugging
 
   const {
@@ -474,7 +532,10 @@ app.post("/saveRestaurant", async (req, res) => {
     plz,
     openingHours,
     closingHours,
+    Description
   } = req.body;
+
+  const image = req.file ? req.file.filename : 'defaultRestaurant.webp';
 
   if (
     !restaurantName ||
@@ -484,19 +545,17 @@ app.post("/saveRestaurant", async (req, res) => {
     !address ||
     !plz ||
     !openingHours ||
-    !closingHours
+    !closingHours ||
+    !Description
   ) {
     return res.status(400).send("All fields are required.");
   }
 
   try {
-    // Hash the password
-    // const hashedPassword = await bcrypt.hash(password, 10);
-
     // Insert the user into the database
     const query = `
-      INSERT INTO Restaurant (Name, Address, Phone_Number, Opening_Hours, Email, password, PLZ, Closing_Hours, PLZtoDeliver)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO Restaurant (Name, Address, Phone_Number, Opening_Hours, Email, password, PLZ, Closing_Hours, PLZtoDeliver , RestaurantImage , Description)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
     db.run(
       query,
@@ -510,6 +569,8 @@ app.post("/saveRestaurant", async (req, res) => {
         plz,
         closingHours,
         plz + ",",
+        image,
+        Description
       ],
       function (err) {
         if (err) {
@@ -528,5 +589,5 @@ app.post("/saveRestaurant", async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`Server running on port http://localhost:${port}`);
 });
